@@ -282,7 +282,7 @@ void UStreetMapComponent::GenerateMesh()
 				AddThick2DLine(
 					Road.RoadPoints[PointIndex],
 					Road.RoadPoints[PointIndex + 1],
-					RoadZ,
+					RoadZ + Road.RoadType * 0.1f,
 					RoadThickness,
 					RoadColor,
 					RoadColor,

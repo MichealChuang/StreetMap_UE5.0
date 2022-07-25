@@ -30,7 +30,7 @@ FOSMFile::~FOSMFile()
 }
 
 
-bool FOSMFile::LoadOpenStreetMapFile(FString& OSMFilePath, const bool bIsFilePathActuallyTextBuffer, FFeedbackContext* FeedbackContext)
+bool FOSMFile::LoadOpenStreetMapFile(FString& OSMFilePath, const bool bIsFilePathActuallyTextBuffer, FFeedbackContext* FeedbackContext, bool InGotConfigLonlat, FVector2f InCenter)
 {
 	const bool bShowSlowTaskDialog = true;
 	const bool bShowCancelButton = true;
@@ -47,12 +47,19 @@ bool FOSMFile::LoadOpenStreetMapFile(FString& OSMFilePath, const bool bIsFilePat
 		/* Out */ ErrorMessage,
 		/* Out */ ErrorLineNumber))
 	{
-		if (NodeMap.Num() > 0)
+		if (InGotConfigLonlat)
 		{
-			AverageLatitude /= NodeMap.Num();
-			AverageLongitude /= NodeMap.Num();
+			AverageLatitude = InCenter.Y;
+			AverageLongitude = InCenter.X;
 		}
-
+		else
+		{
+			if (NodeMap.Num() > 0)
+			{
+				AverageLatitude /= NodeMap.Num();
+				AverageLongitude /= NodeMap.Num();
+			}
+		}
 		return true;
 	}
 

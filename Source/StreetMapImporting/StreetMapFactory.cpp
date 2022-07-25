@@ -78,8 +78,11 @@ bool UStreetMapFactory::LoadFromOpenStreetMapXMLFile(UStreetMap* StreetMap, FStr
 	{
 		// Applies Sanson-Flamsteed (sinusoidal) Projection (see http://www.progonos.com/furuti/MapProj/Normal/CartHow/HowSanson/howSanson.html)
 		return FVector2D(
-			(float)(ConvertLongitudeToMeters(Longitude, Latitude) - ConvertLongitudeToMeters(RelativeToLongitude, Latitude)),
-			(float)(ConvertLatitudeToMeters(Latitude) - ConvertLatitudeToMeters(RelativeToLatitude)));
+			/*(float)(ConvertLongitudeToMeters(Longitude, Latitude) - ConvertLongitudeToMeters(RelativeToLongitude, Latitude)),
+			(float)(ConvertLatitudeToMeters(Latitude) - ConvertLatitudeToMeters(RelativeToLatitude)));*/
+
+			(float)(ConvertLatitudeToMeters(RelativeToLatitude) - ConvertLatitudeToMeters(Latitude)),
+			(float)(ConvertLongitudeToMeters(Longitude, Latitude) - ConvertLongitudeToMeters(RelativeToLongitude, Latitude)));
 	};
 
 	// Adds a road to the street map using the OpenStreetMap data, flattening the road's coordinates into our map's space
@@ -312,7 +315,23 @@ bool UStreetMapFactory::LoadFromOpenStreetMapXMLFile(UStreetMap* StreetMap, FStr
 
 	// Load up the OSM file.  It's in XML format.
 	FOSMFile OSMFile;
-	if (!OSMFile.LoadOpenStreetMapFile(OSMFilePath, bIsFilePathActuallyTextBuffer, FeedbackContext))
+	FString ConfigLatitude = "0.0";
+	FString ConfigLongitude = "0.0";
+	bool bGotConfigLonlat;
+	bGotConfigLonlat = GConfig->GetString(
+		TEXT("Center"),
+		TEXT("lon"),
+		ConfigLongitude,
+		GGameIni
+	);
+	GConfig->GetString(
+		TEXT("Center"),
+		TEXT("lat"),
+		ConfigLatitude,
+		GGameIni
+	);
+	UE_LOG(LogTemp, Warning, TEXT("lonlat = %s, %s"), *ConfigLongitude, *ConfigLatitude);
+	if (!OSMFile.LoadOpenStreetMapFile(OSMFilePath, bIsFilePathActuallyTextBuffer, FeedbackContext, bGotConfigLonlat, FVector2f(FCString::Atof(*ConfigLongitude), FCString::Atof(*ConfigLatitude))))
 	{
 		// Loading failed.  The actual error message will be sent to the FeedbackContext's log.
 		return false;

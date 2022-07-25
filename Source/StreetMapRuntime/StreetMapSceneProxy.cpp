@@ -146,8 +146,8 @@ void FStreetMapSceneProxy::MakeMeshBatch(FMeshBatch& Mesh, FMaterialRenderProxy*
 			//#else
 			//			MaterialProxy = StreetMapComp->GetDefaultMaterial()->GetRenderProxy(IsSelected());
 			//#endif
+		}
 	}
-}
 
 	FMeshBatchElement& BatchElement = Mesh.Elements[0];
 	BatchElement.IndexBuffer = &IndexBuffer32;
@@ -155,12 +155,12 @@ void FStreetMapSceneProxy::MakeMeshBatch(FMeshBatch& Mesh, FMaterialRenderProxy*
 	Mesh.VertexFactory = &VertexFactory;
 	Mesh.MaterialRenderProxy = MaterialProxy;
 	Mesh.CastShadow = true;
-	BatchElement.PrimitiveUniformBuffer = CreatePrimitiveUniformBufferImmediate(GetLocalToWorld(), GetBounds(), GetLocalBounds(), GetLocalBounds(), true, DrawsVelocity());
 	//#if ENGINE_MINOR_VERSION >= 23
 	//	BatchElement.PrimitiveUniformBuffer = CreatePrimitiveUniformBufferImmediate(GetLocalToWorld(), GetBounds(), GetLocalBounds(), GetLocalBounds(), true, DrawsVelocity());
 	//#else
 	//	BatchElement.PrimitiveUniformBuffer = CreatePrimitiveUniformBufferImmediate(GetLocalToWorld(), GetBounds(), GetLocalBounds(), true, UseEditorDepthTest());
 	//#endif
+
 	BatchElement.FirstIndex = 0;
 	const int IndexCount = IndexBuffer32.Indices.Num();
 	BatchElement.NumPrimitives = IndexCount / 3;
